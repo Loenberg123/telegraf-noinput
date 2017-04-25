@@ -13,7 +13,7 @@ parser.add_argument("-S", "--secure", help="Usar https en lugar de http", const=
 parser.add_argument("-i", "--ip", help="Indica la ip de influx")
 parser.add_argument("-d", "--database", help="Indica la base de datos para la consulta")
 parser.add_argument("-H", "--host", help="Indica el host para la consulta")
-parser.add_argument("-t", "--time", help="Tiempo desde el que se obtienen los datos. Ns, Nm, Nh")
+parser.add_argument("-t", "--time", help="Indicar el tiempo de comprobacion. Ns, Nm, Nh (N=numero deseado, s-segundos, m-minutos, h-horas")
 if len(sys.argv)==1:
     parser.print_help()
     sys.exit(1)
@@ -21,7 +21,7 @@ args = parser.parse_args()
 
 
 if args.query:
-	q = "curl -s -G "+ args.secure +"://"+ args.ip +":8086/query --data-urlencode db="+ args.database +" --data-urlencode \"q=SELECT last(boot_time) FROM kernel WHERE host='"+args.host+"' AND time > now() - "+args.time+"\""
+	q = "curl -s -G "+ args.secure +"://"+ args.ip +":8086/query --data-urlencode db="+ args.database +" --data-urlencode \"q=SELECT last(boot_time) FROM kernel WHERE host='"+args.host+"' AND time >= now() - "+args.time+"\""
 	result = subprocess.check_output(q, shell=True)
 	check = "series"
 	data = result.find(check)
